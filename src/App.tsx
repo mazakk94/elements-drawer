@@ -1,10 +1,6 @@
 import React, {useState} from 'react';
 import './App.css';
 
-interface CustomListComponentProps {
-    items: string[]
-}
-
 class ParsedObject {
     type: string;
     label: string;
@@ -26,6 +22,7 @@ const GridComponent = ({items}) => {
 
     function printSelectOptions(element: any) {
         return <select>
+            {/*<option>Test</option>*/}
             {element.value.split(',').map((option: any, index: any) => {
                 return (<option>{option}</option>)
             })}
@@ -67,19 +64,12 @@ function App() {
 
     const [parsedLines, setParsedLines] = useState([new ParsedObject("", "", "", 0, 0)]);
 
-    const [parsedObjectArray, setParsedObjectArray] = useState([[new ParsedObject("", "", "", 0, 0)]]);
-
-    const addElement = (element: string) => {
-        if (list.length > 0) {
-            setList([...list, element])
-        }
-    }
 
     const parseLine = (input: any) => {
         var splittedLine = input.split(';');
         if (splittedLine.length < 5) {
             console.log(`Something is wrong with splitted line. Missing some data`);
-            return new ParsedObject("", "", "", 0, 0);
+            return null;
         } else {
             var line = splittedLine[0];
             var column = splittedLine[1];
@@ -91,26 +81,27 @@ function App() {
         }
     }
 
+    function sortLines(parsedLines: ParsedObject[]): ParsedObject[] {
+        return parsedLines.slice().sort((a, b) => {
+            if (a.line === b.line) {
+                return a.column - b.column;
+            }
+            return a.line - b.line;
+        });
+    }
 
     const handleChangeText = (event: any) => {
         var lines = event.target.value.split('\n');
-
-        // var parsedObjectArray: ParsedObject[][] = [[]];
-        var parsedObjectArray: ParsedObject[][] = [[]];
+        var parsedObjectArray: ParsedObject[] = [];
 
         for (var i = 0; i < lines.length; i++) {
-            var parsedObject: ParsedObject = parseLine(lines[i]);
-            // parsedObjectArray.push(parsedObject);
-
-            parsedObjectArray[parsedObject.line][parsedObject.column] = parsedObject;
-
+            var parsedObject: ParsedObject | null = parseLine(lines[i]);
+            if (parsedObject !== null) {
+                parsedObjectArray.push(parsedObject);
+            }
         }
-
-        // setParsedLines(parsedObjectArray);
-        setParsedObjectArray(parsedObjectArray);
-
-
-
+        var sortedParsedLines = sortLines(parsedObjectArray);
+        setParsedLines(sortedParsedLines);
         setText(event.target.value);
     }
 
@@ -119,11 +110,10 @@ function App() {
             <div>
                 <textarea rows={5} value={text} onChange={handleChangeText}/>
 
-                {/*<GridComponent items={parsedLines}/>*/}
-                <GridComponent items={parsedObjectArray}/>
+                <GridComponent items={parsedLines}/>
+                {/*<GridComponent items={parsedObjectArray}/>*/}
 
                 {/*<p>Example text: {text}</p>*/}
-                {/*<button onClick={() => addElement(text)}>Add text to list</button>*/}
             </div>
 
         </div>
