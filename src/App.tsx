@@ -32,7 +32,7 @@ function App() {
     return (
         <div className="App">
             <div>
-                <textarea rows={5} cols={50} onChange={updateParsedLines}/>
+                <textarea style={{margin: 10}} rows={5} cols={50} onChange={updateParsedLines}/>
                 <GridComponent items={parsedLines}/>
             </div>
         </div>

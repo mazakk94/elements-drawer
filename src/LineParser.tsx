@@ -14,7 +14,6 @@ export default class LineParser {
             var label = splittedLine[2];
             var type = splittedLine[3];
             var value = splittedLine[4];
-            console.log(`splitted line matches validation, printing values: line:${line},column:${column}, label:${label}, type:${type}, value:${value}`);
             return new ParsedObject(type, label, value, line, column);
         }
     }
